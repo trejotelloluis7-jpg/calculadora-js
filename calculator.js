@@ -357,7 +357,7 @@ elKeypad.addEventListener('click', function (event) {
    18. SOPORTE PARA TECLADO FÍSICO
    Escuchamos las teclas del teclado del usuario.
    event.key contiene el nombre de la tecla presionada.
-   Así la calculadora también funciona sin el mouse.
+   Así la calculadora también funciona sin el mouse.    
    ───────────────────────────────────────────── */
 document.addEventListener('keydown', function (event) {
     const key = event.key;
