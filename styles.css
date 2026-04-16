@@ -1,34 +1,418 @@
+/* =========================================================
+   VARIABLES GLOBALES
+   Con :root definimos variables CSS reutilizables en todo
+   el archivo. Si cambias un color aquí, cambia en todos lados.
+   ========================================================= */
+:root {
+    --bg: #0d0d12;
+    /* Fondo principal de la página */
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    /* Fondo semitransparente de la calc */
+    --glass-border: rgba(255, 255, 255, 0.10);
+    /* Borde sutil tipo cristal */
+
+    --num-bg: rgba(255, 255, 255, 0.07);
+    /* Fondo botones numéricos */
+    --num-hover: rgba(255, 255, 255, 0.13);
+    --fn-bg: rgba(255, 255, 255, 0.12);
+    /* Fondo botones de función (AC,%) */
+    --fn-hover: rgba(255, 255, 255, 0.20);
+
+    --op-bg: rgba(99, 102, 241, 0.25);
+    /* Fondo botones operadores */
+    --op-hover: rgba(99, 102, 241, 0.45);
+    --op-active: #6366f1;
+    /* Operador seleccionado: violeta sólido */
+
+    --eq-from: #6366f1;
+    /* Gradiente del botón igual (inicio) */
+    --eq-to: #a855f7;
+    /* Gradiente del botón igual (fin) */
+
+    --text-main: #f1f5f9;
+    /* Texto principal (blanco suave) */
+    --text-muted: rgba(241, 245, 249, 0.40);
+    /* Texto secundario atenuado */
+
+    --radius-calc: 28px;
+    /* Redondez de la calculadora */
+    --radius-btn: 16px;
+    /* Redondez de cada botón */
+
+    --font-display: 'DM Mono', monospace;
+    /* Fuente para los números en pantalla */
+    --font-ui: 'DM Sans', sans-serif;
+    /* Fuente para los botones */
+}
+
+
+/* =========================================================
+   RESET BÁSICO
+   Quitamos márgenes y paddings predeterminados del navegador.
+   box-sizing: border-box hace que el padding NO aumente el
+   tamaño del elemento (facilita los cálculos de tamaño).
+   ========================================================= */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =========================================================
+   BODY — FONDO Y CENTRADO
+   Usamos Flexbox para centrar la calculadora perfectamente
+   en toda la pantalla. min-height: 100dvh usa el alto real
+   del viewport (dvh = dynamic viewport height), ideal en móvil.
+   ========================================================= */
 body {
+    font-family: var(--font-ui);
+    background-color: var(--bg);
+    min-height: 100dvh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
-    background: #1e1e2f;
-    font-family: Arial;
+    justify-content: center;
+    overflow: hidden;
+    /* Evita barras de scroll por las esferas decorativas */
 }
 
+
+/* =========================================================
+   ESFERAS DECORATIVAS DE FONDO
+   Son divs vacíos con position: fixed que flotan detrás de
+   todo. filter: blur() los difumina para crear un efecto
+   de luz ambiental. No afectan el layout ni la interacción.
+   ========================================================= */
+.bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    /* 50% = círculo perfecto */
+    filter: blur(80px);
+    opacity: 0.35;
+    pointer-events: none;
+    /* Los clics los "atraviesan" — no son interactivos */
+    z-index: 0;
+}
+
+.orb-1 {
+    width: 400px;
+    height: 400px;
+    background: #6366f1;
+    /* Violeta */
+    top: -120px;
+    left: -100px;
+}
+
+.orb-2 {
+    width: 300px;
+    height: 300px;
+    background: #a855f7;
+    /* Morado */
+    bottom: -80px;
+    right: -80px;
+}
+
+.orb-3 {
+    width: 200px;
+    height: 200px;
+    background: #06b6d4;
+    /* Cyan */
+    top: 40%;
+    left: 60%;
+    opacity: 0.20;
+}
+
+
+/* =========================================================
+   WRAPPER — El contenedor que apila la calculadora
+   position: relative y z-index: 1 asegura que la calculadora
+   quede ENCIMA de las esferas de fondo (z-index: 0).
+   ========================================================= */
+.wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+
+/* =========================================================
+   CALCULADORA — GLASSMORPHISM
+   Este es el efecto "vidrio esmerilado":
+   - backdrop-filter: blur() difumina lo que hay DETRÁS del elemento
+   - background semitransparente deja ver algo del fondo borroso
+   - border con poca opacidad simula el borde del cristal
+   ========================================================= */
 .calculator {
-    background: #2d2d44;
-    padding: 20px;
-    border-radius: 10px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px);
+    /* Efecto cristal principal */
+    -webkit-backdrop-filter: blur(24px);
+    /* Prefijo para Safari */
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-calc);
+    padding: 24px;
+    width: 320px;
+
+    /* Animación de entrada: aparece desde abajo con un fade */
+    animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-#display {
-    width: 100%;
-    height: 50px;
-    margin-bottom: 10px;
-    font-size: 20px;
+/* Keyframe: define los estados de inicio y fin de la animación slideUp */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* =========================================================
+   PANTALLA
+   ========================================================= */
+.display {
+    background: rgba(0, 0, 0, 0.30);
+    border-radius: 18px;
+    padding: 20px 20px 16px;
+    margin-bottom: 20px;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    /* Apila los tres elementos verticalmente */
+    justify-content: flex-end;
+    /* Los empuja hacia abajo (como calculadora real) */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Línea pequeña: historial de la operación anterior */
+.display__history {
+    font-family: var(--font-display);
+    font-size: 13px;
+    color: var(--text-muted);
+    min-height: 20px;
     text-align: right;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s;
+    /* Aparece/desaparece suavemente */
 }
 
-.buttons {
+/* Número principal en pantalla — grande y prominente */
+.display__current {
+    font-family: var(--font-display);
+    font-size: 52px;
+    font-weight: 300;
+    /* Fuente delgada = más elegante */
+    color: var(--text-main);
+    text-align: right;
+    line-height: 1;
+    letter-spacing: -1px;
+    word-break: break-all;
+    /* Evita que números largos rompan el layout */
+
+    /* Transición suave cuando cambia el tamaño de fuente */
+    transition: font-size 0.15s ease;
+}
+
+/* Badge que muestra el operador activo (esquina superior derecha) */
+.display__operator {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    color: #a5b4fc;
+    /* Violeta claro */
+    opacity: 0;
+    /* Invisible por defecto; JS lo activa */
+    transition: opacity 0.2s;
+}
+
+/* Clase que JS agrega para mostrar el badge del operador */
+.display__operator.visible {
+    opacity: 1;
+}
+
+
+/* =========================================================
+   CUADRÍCULA DE BOTONES
+   CSS Grid con 4 columnas iguales (1fr cada una).
+   gap es el espacio entre filas y columnas.
+   ========================================================= */
+.keypad {
     display: grid;
-    grid-template-columns: repeat(4, 60px);
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
 }
 
-button {
-    height: 50px;
+
+/* =========================================================
+   BOTÓN BASE
+   Todos los botones comparten estas propiedades.
+   Las clases específicas (btn--num, btn--op, etc.)
+   sobreescriben solo lo que necesitan cambiar.
+   ========================================================= */
+.btn {
+    font-family: var(--font-ui);
     font-size: 18px;
+    font-weight: 400;
+    color: var(--text-main);
+    border: none;
+    /* Sin borde por defecto */
+    border-radius: var(--radius-btn);
+    height: 68px;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    /* Para el efecto ripple que creamos en JS */
+    transition:
+        background 0.15s ease,
+        transform 0.08s ease,
+        box-shadow 0.15s ease;
+
+    /* Selección de texto desactivada para mejorar la experiencia de clic */
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Efecto visual al presionar: el botón se encoge ligeramente */
+.btn:active {
+    transform: scale(0.93);
+}
+
+
+/* ── TIPOS DE BOTÓN ── */
+
+/* Botones de función: AC, ⌫, %, ± */
+.btn--fn {
+    background: var(--fn-bg);
+    font-size: 16px;
+}
+
+.btn--fn:hover {
+    background: var(--fn-hover);
+}
+
+/* Botones numéricos: 0-9 y punto decimal */
+.btn--num {
+    background: var(--num-bg);
+}
+
+.btn--num:hover {
+    background: var(--num-hover);
+}
+
+/* El 0 ocupa 2 columnas del grid (más ancho) */
+.btn--zero {
+    grid-column: span 2;
+}
+
+/* Botones de operador: ÷, ×, −, + */
+.btn--op {
+    background: var(--op-bg);
+    color: #a5b4fc;
+    /* Texto violeta claro */
+    font-size: 22px;
+    font-weight: 300;
+}
+
+.btn--op:hover {
+    background: var(--op-hover);
+}
+
+/* Estado "activo": cuando el operador está seleccionado */
+.btn--op.is-active {
+    background: var(--op-active);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+    /* Brillo violeta */
+}
+
+/* Botón igual: gradiente violeta-morado para destacar */
+.btn--eq {
+    background: linear-gradient(135deg, var(--eq-from), var(--eq-to));
+    color: #fff;
+    font-size: 24px;
+    font-weight: 500;
+    box-shadow: 0 4px 24px rgba(99, 102, 241, 0.35);
+}
+
+.btn--eq:hover {
+    box-shadow: 0 6px 30px rgba(168, 85, 247, 0.50);
+    filter: brightness(1.1);
+}
+
+
+/* =========================================================
+   EFECTO RIPPLE (ondas al hacer clic)
+   Cuando JS agrega un elemento <span class="ripple">,
+   CSS lo anima expandiéndolo desde el punto del clic.
+   ========================================================= */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.20);
+    transform: scale(0);
+    /* Empieza invisible (tamaño 0) */
+    animation: rippleAnim 0.45s linear;
+    pointer-events: none;
+    /* El ripple no interfiere con los clics */
+}
+
+@keyframes rippleAnim {
+    to {
+        transform: scale(4);
+        /* Se expande 4 veces su tamaño */
+        opacity: 0;
+        /* Y desaparece mientras crece */
+    }
+}
+
+
+/* =========================================================
+   CLASE DE ANIMACIÓN PARA LA PANTALLA
+   JS agrega y remueve .pop para animar el número cuando
+   se muestra un resultado.
+   ========================================================= */
+.pop {
+    animation: popAnim 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popAnim {
+    0% {
+        transform: scale(0.88);
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — PANTALLAS PEQUEÑAS
+   En móviles pequeños achicamos un poco la calculadora
+   para que entre bien sin scroll.
+   ========================================================= */
+@media (max-width: 360px) {
+    .calculator {
+        width: 290px;
+        padding: 18px;
+    }
+
+    .btn {
+        height: 60px;
+        font-size: 16px;
+    }
+
+    .display__current {
+        font-size: 42px;
+    }
 }
