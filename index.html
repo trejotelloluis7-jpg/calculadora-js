@@ -1,43 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
-    <title>Document</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora</title>
+
+    <!-- Fuente especial desde Google Fonts: DM Mono para números, DM Sans para botones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+
+    <!-- Enlazamos nuestro archivo de estilos externo -->
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-    <div class="calculator">
-        <input type="text" id="display" disabled>
-        <div class="buttons">
 
-            <button>1</button>
-            <button>2</button>
-            <button>3</button>
-            <button>/</button>
+    <!-- Esferas decorativas de fondo (solo visuales, sin función) -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
 
-            <button>4</button>
-            <button>5</button>
-            <button>6</button>
-            <button>*</button>
+    <!-- Contenedor principal que centra la calculadora en pantalla -->
+    <main class="wrapper">
 
-            <button>7</button>
-            <button>8</button>
-            <button>9</button>
-            <button>+</button>
+        <div class="calculator" id="calculator">
 
-            <button>0</button>
-            <button>.</button>
-            <button id="equals">=</button>
-            <button>-</button>
+            <!-- ── PANTALLA ── -->
+            <!-- Aquí se muestran los números y operaciones al usuario -->
+            <div class="display">
 
-            <button id="clears">C</button>
+                <!-- Línea pequeña: muestra la expresión anterior, ej: "120 × 3 =" -->
+                <div class="display__history" id="history"></div>
 
+                <!-- Línea grande: número actual o resultado en pantalla -->
+                <div class="display__current" id="current">0</div>
+
+                <!-- Indicador del operador activo: aparece cuando eliges +, -, etc. -->
+                <div class="display__operator" id="operatorBadge"></div>
+            </div>
+
+            <!-- ── CUADRÍCULA DE BOTONES ── -->
+            <!-- Usamos data-* para pasar información a JavaScript sin depender del texto visible -->
+            <div class="keypad">
+
+                <!-- Fila 1: Limpiar, borrar un dígito, porcentaje, dividir -->
+                <button class="btn btn--fn" data-action="clear">AC</button>
+                <button class="btn btn--fn" data-action="backspace">⌫</button>
+                <button class="btn btn--fn" data-action="percent">%</button>
+                <button class="btn btn--op" data-action="operator" data-value="/">÷</button>
+
+                <!-- Fila 2: 7, 8, 9, multiplicar -->
+                <button class="btn btn--num" data-action="number" data-value="7">7</button>
+                <button class="btn btn--num" data-action="number" data-value="8">8</button>
+                <button class="btn btn--num" data-action="number" data-value="9">9</button>
+                <button class="btn btn--op" data-action="operator" data-value="*">×</button>
+
+                <!-- Fila 3: 4, 5, 6, restar -->
+                <button class="btn btn--num" data-action="number" data-value="4">4</button>
+                <button class="btn btn--num" data-action="number" data-value="5">5</button>
+                <button class="btn btn--num" data-action="number" data-value="6">6</button>
+                <button class="btn btn--op" data-action="operator" data-value="-">−</button>
+
+                <!-- Fila 4: 1, 2, 3, sumar -->
+                <button class="btn btn--num" data-action="number" data-value="1">1</button>
+                <button class="btn btn--num" data-action="number" data-value="2">2</button>
+                <button class="btn btn--num" data-action="number" data-value="3">3</button>
+                <button class="btn btn--op" data-action="operator" data-value="+">+</button>
+
+                <!-- Fila 5: cambio de signo, cero (doble ancho), decimal, igual -->
+                <button class="btn btn--fn" data-action="sign">±</button>
+                <button class="btn btn--num btn--zero" data-action="number" data-value="0">0</button>
+                <button class="btn btn--num" data-action="decimal">.</button>
+                <button class="btn btn--eq" data-action="equals">=</button>
+
+            </div>
+            <!-- fin .keypad -->
 
         </div>
-    </div>
+        <!-- fin .calculator -->
 
-    <script src="calculator.js"></script>
+    </main>
+
+    <!-- Enlazamos nuestro archivo de lógica JavaScript (al final para que el HTML cargue primero) -->
+    <script src="script.js"></script>
 
 </body>
 
